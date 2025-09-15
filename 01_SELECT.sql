@@ -232,13 +232,3 @@ WHERE dept_id != 2;
 /* 연결 연산자 CONCAT() */
 SELECT CONCAT(emp_id, full_name) AS 사번이름연결
 FROM employees;
-
-
-
-
-
-
-
-
-
-
