@@ -129,9 +129,16 @@ SELECT DATEDIFF('2025-09-15', '2025-09-14');
 SELECT full_name, hire_date, DATEDIFF(CURDATE(), hire_date)
 FROM employees;
 
+-- 컬럼명 별칭 지정하기
+/*************************
+컬럼명 별칭 지정하기
+1) 컬럼명 AS 별칭   : 문자 OK, 띄어쓰기 X, 특수문자 X
+2) 컬럼명 AS `별칭` : 문자 OK, 띄어쓰기 OK, 특수문자 OK
+3) 컬럼명 별칭      : 문자 OK, 띄어쓰기 X, 특수문자 X
+4) 컬럼명 `별칭`    : 문자 OK, 띄어쓰기 OK, 특수문자 OK
 
 
-
+*************************/
 
 
 
