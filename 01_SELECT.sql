@@ -218,8 +218,27 @@ WHERE  조건식;
 ** SELECT 절로 원하는 컬럼만 조회.  --> 3번
 */
 
+/* 문제 */
+-- employees 테이블에서 연봉이 5천만원 이하인 사원의 사번, 이름, 연봉 조회
+SELECT emp_id AS `사번`, full_name AS `이름`, salary*12 AS `연봉`
+FROM employees
+WHERE (salary*12) >= 50000000;
+
+-- employees 테이블에서 부서코드가 2번이 아닌 사원의 이름, 부서코드, 전화번호 조회
+SELECT full_name AS `이름`, dept_id AS `부서코드`, phone AS `전화번호`
+FROM employees
+WHERE dept_id != 2;
+
+/* 연결 연산자 CONCAT() */
+SELECT CONCAT(emp_id, full_name) AS 사번이름연결
+FROM employees;
 
 
 
 
- 
+
+
+
+
+
+
