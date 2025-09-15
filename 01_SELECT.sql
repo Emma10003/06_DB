@@ -131,36 +131,95 @@ FROM employees;
 
 -- 컬럼명 별칭 지정하기
 /*************************
-컬럼명 별칭 지정하기
+컬럼명 별칭 지정하기 (Alias)
 1) 컬럼명 AS 별칭   : 문자 OK, 띄어쓰기 X, 특수문자 X
 2) 컬럼명 AS `별칭` : 문자 OK, 띄어쓰기 OK, 특수문자 OK
 3) 컬럼명 별칭      : 문자 OK, 띄어쓰기 X, 특수문자 X
 4) 컬럼명 `별칭`    : 문자 OK, 띄어쓰기 OK, 특수문자 OK
 
-
+`` 이나 "" 나 '' 모두 사용 가능
+대소문자 구분
 *************************/
 
+-- 별칭 이용해서 근무일수로 컬럼명 설정 후 조회하기
+SELECT full_name, hire_date, DATEDIFF(CURDATE(), hire_date) AS `근무일수`
+FROM employees;
+
+/* 문제 */
+-- 1. employees 테이블에서 사번, 이름, 이메일로 해당 컬럼 데이터 조회 (AS `` 사용하지 않고 조회)
+SELECT emp_code 사번, full_name 이름, email 이메일
+FROM employees;
+
+-- 2. employees. 테이블에서 이름, 급여, 연봉(급여*12) 로 해당컬럼 데이터 조회 (AS `` 사용하고 조회)
+SELECT full_name AS `이름`, salary AS `급여`, ceil(salary * 12) AS `연봉(급여*12)`
+FROM employees;
+
+-- 3. positions 테이블에서 직급명, 최소급여, 최대급여, 급여차이 명칭으로
+-- 해당 컬럼 데이터 조회 (별칭에서 as "" 사용하고 조회)
+SELECT position_name AS "직급명", ceil(min_salary) AS "최소급여", ceil(max_salary) AS "최대급여", ceil(max_salary - min_salary) AS "급여차이"
+FROM positions;
+
+-- training_programs 테이블에서 프로그램명, 교육시간, 교육일수(8시간) 기준 조회
+-- 교육일수를 반올림 처리하여 정수로 조회
+SELECT program_name AS `교육프로그램`, duration_hours AS 총교육시간, round(duration_hours / 8) AS "교육일수"
+FROM training_programs;
+
+
+/****************************
+DISTINCT (별개의, 전혀 다른)
+--> 중복 제거
+-- 조회 결과 집합(RESULT SET)에서 
+   지정된 컬럼의 값이 중복되는 경우
+   이를 한 번만 표시할 때 사용
+****************************/
+-- STEP 01. employees 테이블에서 모든 사원의 부서코드 조회
+SELECT dept_id
+FROM employees;
+
+-- STEP 02. employees 테이블에서 사원이 존재하는 부서코드만 조회
+SELECT *
+FROM departments;
+
+-- 조회한 결과가 존재하지 않는다. -> 조회결과 : 0
+-- 에러가 아님!!
+SELECT DISTINCT manager_id
+FROM employees;
+
+-- employees 테이블에서 사원이 있는 부서 ID만 중복을 제거한 후 조회
+SELECT DISTINCT dept_id
+FROM employees;
+
+
+# error code 1046 : 어떤 DB를 사용할 것인지 지정해주지 않아서 발생하는 문제 - USE 사용해서 지정해주기!
+-- employees 테이블에서 존재하는 position_id 코드의 종류를 중복 없이 조회
+SELECT DISTINCT position_id
+FROM employees;
+
+
+
+/****************************
+		   WHERE 절
+테이블에서 조건을 충족하는 행을 조회할 때 사용.
+WHERE 절에는 조건식(true/false)만 작성.
+
+비교연산자 : >, <, >=, <=, =(같다), !=(같지 않다)
+논리연산자 : AND, OR, NOT
+
+SELECT 컬럼명, 컬럼명, ...
+FROM   테이블명
+WHERE  조건식;
+****************************/
+-- employees 테이블에서 급여가 300만원 초과하는 사원의 사번, 이름, 급여, 부서코드 조회
+/*3*/ SELECT emp_id, full_name, ceil(salary), dept_id
+/*1*/ FROM employees
+/*2*/ WHERE salary > 3000000;
+/* FROM 절에 지정된 테이블에서  --> 1번
+** WHERE 절로 행을 먼저 추려내고, 추려진 결과 행들 중에서  --> 2번
+** SELECT 절로 원하는 컬럼만 조회.  --> 3번
+*/
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
