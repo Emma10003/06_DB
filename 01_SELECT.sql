@@ -373,24 +373,24 @@ ORDER BY 절
 
 SELECT 구문에서 가장 마지막에 해석됨.
 [작성법]
-SELECT 컬럼명 AS 별칭, 컬럼명, 컬럼명, ...
-FROM 테이블명
-WHERE 조건식
-ORDER BY 컬럼명 | 별칭 | 컬럼 순서[오름/내림차순]
+3: SELECT 컬럼명 AS 별칭, 컬럼명, 컬럼명, ...
+1: FROM 테이블명
+2: WHERE 조건식
+4: ORDER BY 컬럼명 | 별칭 | 컬럼 순서[오름/내림차순]
 	* 컬럼이 오름차순인지 내림차순인지 작성되지 않았을 때는 기본으로 오름차순 정렬
-    * ASC  : 오름차순 (=ASCENDING)
-    * DESC : 내림차순 (=DESCENDING)
+    * ASC  : 오름차순 (=ascending)
+    * DESC : 내림차순 (=descending)
 ************************/
 
 -- employees 테이블에서 모든 사원의 이름, 급여 조회
 -- 단, 급여 오름차순으로 정렬
-SELECT full_name, salary
-FROM employees
-ORDER BY salary;  -- ASC 기본값
+/*2*/ SELECT full_name, salary
+/*1*/ FROM employees
+/*3*/ ORDER BY salary;  -- ASC 기본값
 
-SELECT full_name, salary
-FROM employees
-ORDER BY salary ASC;
+/*2*/ SELECT full_name, salary
+/*1*/ FROM employees
+/*3*/ ORDER BY salary ASC;
 
 SELECT full_name, salary
 FROM employees
@@ -403,6 +403,57 @@ SELECT emp_id, full_name, salary
 FROM employees
 WHERE salary BETWEEN 40000000 AND 100000000
 ORDER BY full_name DESC;
+
+SELECT emp_id, full_name, salary
+FROM employees
+WHERE salary BETWEEN 40000000 AND 100000000
+ORDER BY 2 DESC; -- 2번째 컬럼(full_name)으로 정렬
+
+/* ORDER BY 절 수식 적용해서 정렬 가능 */
+-- employees 테이블에서 이름, 연봉을 연봉 내림차순으로 조회
+SELECT full_name, salary * 12
+FROM employees
+ORDER BY 연봉 DESC;
+
+SELECT full_name, salary * 12 AS 연봉
+FROM employees
+ORDER BY 연봉 DESC;
+
+SELECT full_name, salary * 12 AS 연봉
+FROM employees
+ORDER BY salary * 12 DESC;
+
+/* NULL 값 정렬 처리 */
+-- 기본적으로 NULL 값은 가장 작은 값으로 처리됨
+-- ASC  : NULL 이 최상위에 존재
+-- DESC : NULL 이 최하위에 존재
+/*3*/ SELECT full_name, dept_id AS 부서코드
+/*1*/ FROM employees
+/*2*/ WHERE dept_id = 4
+/*4*/ ORDER BY 부서코드 DESC;
+
+
+/*3*/ SELECT full_name, dept_id AS 부서코드
+/*1*/ FROM employees
+/*2*/ WHERE 부서코드 = 4
+/*4*/ ORDER BY 부서코드 DESC;
+
+-- 모든 사원의 이름, 전화번호를 phone 기준으로 오름차순 조회
+SELECT full_name, phone
+FROM employees
+
+-- employees 테이블에서
+-- 이름, 부서ID, 급여를
+-- 급여 내림차순 정렬
+
+
+
+
+
+
+
+
+
 
 
 
