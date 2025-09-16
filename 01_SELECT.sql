@@ -438,13 +438,18 @@ ORDER BY salary * 12 DESC;
 /*2*/ WHERE 부서코드 = 4
 /*4*/ ORDER BY 부서코드 DESC;
 
+/* 문제 */
 -- 모든 사원의 이름, 전화번호를 phone 기준으로 오름차순 조회
 SELECT full_name, phone
 FROM employees
+ORDER BY phone;
 
 -- employees 테이블에서
 -- 이름, 부서ID, 급여를
 -- 급여 내림차순 정렬
+SELECT full_name, dept_id, salary
+FROM employees
+ORDER BY salary DESC;
 
 
 
