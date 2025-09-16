@@ -232,3 +232,119 @@ WHERE dept_id != 2;
 /* 연결 연산자 CONCAT() */
 SELECT CONCAT(emp_id, full_name) AS 사번이름연결
 FROM employees;
+
+
+/**************************
+          LIKE 절
+**************************/
+USE employee_management;
+
+-- employees 테이블에서 성이 '김' 씨인 사원의 사번, 이름 조회
+SELECT emp_id, full_name
+FROM employees
+WHERE first_name LIKE '김%';
+
+-- employees 테이블에서 full_name 이름에 '장'이 포함된 사원의 사번, 이름 조회
+SELECT emp_id, full_name
+FROM employees
+WHERE full_name LIKE '%장%';
+
+SELECT *
+FROM employees;
+
+-- employees 테이블에서 전화번호가 02 로 시작하는 사원의 이름, 전화번호 조회
+SELECT full_name, phone
+FROM employees
+WHERE phone LIKE '02%';
+
+-- employees 테이블에서 email 의 아이디가 @ 기준 3글자인 사원의 이름, 이메일 조회
+SELECT full_name, email
+FROM employees
+WHERE email LIKE '___@%'; -- 뒤에 '%' 도 붙여줘야 함!!!
+
+-- employees 테이블에서 사원코드가 EMP 로 시작하고 EMP 포함해서 총 6자리인 사원 조회
+SELECT emp_code, full_name, email
+FROM employees
+WHERE emp_code LIKE 'EMP___';
+
+
+/********************
+       WHERE절
+ AND OR BETWEEN IN()
+********************/
+-- employees 테이블에서
+-- 급여가 4000만 이상, 7000만 이하인 사원의 사번, 이름, 급여 조회
+-- emp_id, full_name, salary
+-- AND, BETWEEN 구문 이용한 두 가지 SQL문 작성하기
+SELECT emp_id, full_name, salary
+FROM employees
+WHERE salary BETWEEN 40000000 AND 70000000;
+
+SELECT emp_id, full_name, salary
+FROM employees
+WHERE salary >= 40000000 AND salary <= 70000000;
+
+
+-- employees 테이블에서
+-- 급여가 4000만 미만 또는 8000만 초과인 사원의 사번, 이름, 급여 조회
+-- emp_id, full_name, salary
+-- OR, NOT BETWEEN 구문 이용한 두 가지 SQL문 작성하기
+SELECT emp_id, full_name, salary
+FROM employees
+WHERE salary NOT BETWEEN 40000000 AND 80000000;
+
+SELECT emp_id, full_name, salary
+FROM employees
+WHERE salary < 40000000 OR salary > 80000000;
+
+
+-- employees 테이블에서
+-- 입사일이 2020-01-01 부터 2020-12-31 사이인 사원의 이름, 입사일 조회
+-- BETWEEN 구문 이용
+-- full_name, hire_date
+SELECT full_name, hire_date
+FROM employees
+WHERE hire_date BETWEEN '2020-01-01' AND '2020-12-31';
+
+
+-- employees 테이블에서
+-- 생년월일(date_of_birth)이 1980년대인 사원 조회
+-- BETWEEN 구문 이용
+-- emp_id, full_name, date_of_birth
+SELECT emp_id, full_name, date_of_birth
+FROM employees
+WHERE date_of_birth BETWEEN '1980-01-01' AND '1989-12-31';
+
+
+
+-- employees 테이블에서
+-- 부서ID가 4인 사원 중
+-- 급여가 4000만 이상, 7000만 이하인 사원의 사번, 이름, 급여 조회
+-- emp_id, full_name, salary
+-- AND, BETWEEN 구문 이용한 두 가지 SQL문 작성하기
+SELECT emp_id, full_name, salary, dept_id
+FROM employees
+WHERE dept_id = 4 AND salary >= 40000000 AND salary <= 70000000;
+
+SELECT emp_id, full_name, salary, dept_id
+FROM employees
+WHERE dept_id = 4
+AND salary BETWEEN 40000000 AND 70000000;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
