@@ -1,8 +1,21 @@
+/*
+1046 : 스키마 명칭(=DB를 조작할 수 있는 설계도)를 선택하지 않음
+스키마(=데이터베이스)가 만들어져 있는가?
+   -> 1. 없으면 : CREATE DATABASE IF NOT EXISTS 데이터베이스명칭;
+   -> 2. 있으면 : USE 데이터베이스명칭(=스키마명칭);
+   
+Error Code : 1049. Unknown database 'chun_university'
+             USE 데이터베이스명칭; -> 존재하는 데이터베이스가 없습니다.
+*/
+
+USE chun_university;
+
 -- 문제 1
 -- chun_university 데이터베이스의 STUDENT 테이블에서 
 -- 모든 학생의 학번(STUDENT_NO), 이름(STUDENT_NAME), 주소(STUDENT_ADDRESS)를 조회하시오.
 SELECT student_no, student_name, student_address
 FROM student;
+
 
 -- 문제 2
 -- PROFESSOR 테이블의 모든 데이터를 조회하시오.
@@ -19,6 +32,7 @@ FROM department;
 -- 문제 4
 -- STUDENT 테이블에서 모든 학생의 이름, 입학일, 입학일로부터 현재까지의 일수를 조회하시오.
 -- (컬럼명은 각각 '학생이름', '입학일', '재학일수'로 별칭 지정)
+-- 	   MySQL에서 자체적으로 개발자를 위해 만든 기능  -  DATEDIFF(): 현재날짜와 입학일 을 계산해서 재학일자를 알려줌
 SELECT student_name "학생이름", entrance_date "입학일", DATEDIFF(NOW(), entrance_date) "재학일수"
 FROM student;
 
@@ -26,6 +40,8 @@ FROM student;
 -- 문제 5
 -- 현재 시간과 어제, 내일을 조회하시오.
 -- (컬럼명은 각각 '현재시간', '어제', '내일'로 별칭 지정)
+-- 가상테이블 : DUAL (DUmmy tAbLe)
+-- DUMMY : 인간이나 실제 데이터 대신 사용되는 모형
 SELECT NOW() "현재시간", NOW() - INTERVAL 1 DAY "어제", NOW() + INTERVAL 1 DAY "내일";
 
 
@@ -51,7 +67,7 @@ FROM grade;
 -- 문제 9
 -- STUDENT 테이블에서 휴학여부(ABSENCE_YN)가 'Y'인 학생의 
 -- 학번, 이름, 학과번호를 조회하시오.
-SELECT STUDENT_NO, STUDENT_NAME, DEPARTMENT_NO
+SELECT student_no, student_name, department_no
 FROM student
 WHERE ABSENCE_YN = 'Y';
 
