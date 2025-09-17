@@ -10,6 +10,7 @@ SELECT 문 해석 순서
 
 FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY
 * GROUP BY 에서는 SELECT 에서 지정한 별칭을 사용할 수 있다.
+* SELECT 외에는 작은따옴표('') 대신 역따옴표(``) 사용할 것!!
 */
 
 -- employees 테이블에서 사원 수 조회
@@ -50,6 +51,7 @@ SELECT position_id, SUM(salary) AS `2020년 이후 입사자 급여 합`
 FROM employees
 WHERE year(hire_date) >= 2020
 GROUP BY position_id;
+
 /*
 GROUP BY 사용 시 주의사항
 SELECT 문에 GROUP BY 절을 사용할 경우
@@ -58,20 +60,51 @@ SELECT 절에 명시한 조회하려는 컬럼 중
 모두 다 GROUP BY 절에 작성해야 함!!!!
 */
 
+-- employees 테이블에서 부서 별로 같은 직급인 사원의 급여 합계를 조회하고
+-- 부서ID 오름차순으로 정렬
+SELECT position_id, SUM(salary) AS `급여 합`
+FROM employees
+GROUP BY position_id
+ORDER BY dept_id;
 
 
+/*
+0	73	16:30:41	SELECT position_id, SUM(salary) AS `급여 합`
+ FROM employees
+ GROUP BY position_id
+ ORDER BY dept_id
+ LIMIT 0, 1000	Error Code: 1055. Expression #1 of ORDER BY clause is not in GROUP BY 
+ clause and contains nonaggregated column 
+ 'employee_management.employees.dept_id' 
+ which is not functionally dependent on columns in GROUP BY clause; 
+ this is incompatible with sql_mode=only_full_group_by	0.000 sec
+*/
 
+select * from employees;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- 1. employees 테이블에서 부서 별로 직급이 같은 직원의 수를 조회하고
+-- 부서ID, 직급 ID 오름차순으로 정렬
+SELECT dept_id, position_id, COUNT(*)
+FROM employees
+GROUP BY dept_id, position_id
+ORDER BY dept_id, position_id;
+/*
+GROUP BY dept_id, position_id
+dept_id 와 position_id 의 조합을 기준으로 데이터를 묶는다.
+예)
+	부서 10, 직위 1
+    부서 10, 직위 2
+    부서 20, 직위 1
+    등등..
+    각 조합마다 COUNT(*) 로 몇 명의 직원이 존재하는지 계산하겠다.
+ORDER BY dept_id, position_id
+	계산한 결과를
+    부서ID -> 직위 ID 순서로 오름차순 정렬
+    부서로 정렬된 뒤, 그 안에서 직위별로 정렬
+*/
+-- 2. 부서별 평균 급여를 조회하고
+-- 부서를 조회하여 부서ID 오름차순으로 정렬
+SELECT dept_id, AVG(salary) AS `평균 급여`
+FROM employees
+GROUP BY dept_id
+ORDER BY dept_id;
