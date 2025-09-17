@@ -9,4 +9,69 @@ SELECT 문 해석 순서
 6: ORDER BY 컬럼명 | 별칭 | 컬럼순번 정렬방식[NULLS FIRST (ASC) | LAST (DSEC)];
 
 FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY
+* GROUP BY 에서는 SELECT 에서 지정한 별칭을 사용할 수 있다.
 */
+
+-- employees 테이블에서 사원 수 조회
+SELECT dept_id, COUNT(*)
+FROM employees
+GROUP BY dept_id;
+
+-- employees 테이블에서 부서별로 보너스를 주고싶음
+-- 보너스를 주는 조건 : 연봉이 6천만원 이상인 사원만 보너스 제공
+-- 보너스를 받는 사원 수를 부서별로 조회
+SELECT dept_id, COUNT(*)
+FROM employees
+WHERE salary >= 60000000
+GROUP BY dept_id;
+
+-- employees 테이블에서
+-- 부서 ID, 부서별 급여의 합계 AS 급여 합계
+-- 부서별 급여의 평균(정수 - 내림처리) AS 급여 평균
+-- 인원 수 조회 AS 인원 수
+-- 부서 ID 순으로 오름차순 정렬
+SELECT dept_id, SUM(salary) AS `급여 합계`, FLOOR(AVG(salary)) AS `급여 평균`, COUNT(emp_id) AS `인원 수`
+FROM employees
+GROUP BY dept_id
+ORDER BY dept_id;
+
+-- 부서 ID 가 4, 5인 부서의 평균 급여 조회 WHERE IN()
+-- SELECT dept_id, floor(AVG(salary))
+SELECT dept_id, 
+		FLOOR(AVG(salary)) AS `급여 평균`
+FROM employees
+WHERE dept_id IN(4, 5)
+GROUP BY dept_id;
+
+-- employees 테이블에서 직급 별 2020년도 이후 입사자들의 급여 합 조회
+-- position_id, year(hire_date), salary
+-- SELECT FROM WHERE GROUP BY;
+SELECT position_id, SUM(salary) AS `2020년 이후 입사자 급여 합`
+FROM employees
+WHERE year(hire_date) >= 2020
+GROUP BY position_id;
+/*
+GROUP BY 사용 시 주의사항
+SELECT 문에 GROUP BY 절을 사용할 경우
+SELECT 절에 명시한 조회하려는 컬럼 중
+그룹함수가 적용되지 않은 컬럼은
+모두 다 GROUP BY 절에 작성해야 함!!!!
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
