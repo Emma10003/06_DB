@@ -12,23 +12,26 @@ FROM grade;
 
 -- 문제 3
 -- CLASS_PROFESSOR 테이블에서 과목번호와 교수번호를 조회하시오.
-SELECT *
+SELECT class_no, professor_no
 FROM class_professor;
 
 -- 문제 4
 -- PROFESSOR 테이블에서 교수번호, 교수명, 학과번호를 조회하되, 
 -- 컬럼명을 각각 '교수코드', '교수이름', '소속학과'로 별칭을 지정하시오.
-SELECT professor_no AS `교수코드`, professor_name AS `교수이름`, department_no AS `학과번호`
+SELECT professor_no AS `교수코드`, professor_name AS `교수이름`, department_no AS `소속학과`
 FROM professor;
 
 -- 문제 5
 -- DEPARTMENT 테이블에서 학과명과 정원을 연결하여 '학과명(정원명)' 형태로 조회하시오.
-SELECT CONCAT(department_name, '(', capacity, ')')
+SELECT CONCAT(department_name, ' (', capacity, '명)') AS 학과정보
 FROM department;
 
 -- 문제 6
 -- 현재 날짜에서 7일 후, 30일 후, 365일 후를 조회하시오.
-SELECT NOW() + INTERVAL 7 DAY, NOW() + INTERVAL 30 DAY, NOW() + INTERVAL 365 DAY;
+SELECT NOW(),
+	   NOW() + INTERVAL 7 DAY,  -- DATE_ADD() 사용하는 것도 가능!
+	   NOW() + INTERVAL 30 DAY,
+	   NOW() + INTERVAL 365 DAY;
 
 -- 문제 7
 -- STUDENT 테이블에서 학번 앞에 'STU-'를 붙여서 조회하시오.
