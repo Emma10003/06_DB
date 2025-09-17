@@ -9,5 +9,4 @@ SELECT 문 해석 순서
 6: ORDER BY 컬럼명 | 별칭 | 컬럼순번 정렬방식[NULLS FIRST (ASC) | LAST (DSEC)];
 
 FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY
-
 */
