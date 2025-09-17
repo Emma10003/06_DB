@@ -190,6 +190,6 @@ FROM employees;
 SELECT COUNT(DISTINCT dept_code)
 FROM employees E
 JOIN departments D ON E.dept_id = D.dept_id;
-
+  
 
 
