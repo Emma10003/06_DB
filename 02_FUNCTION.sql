@@ -122,7 +122,7 @@ FROM employees;
 
 -- 1. 모든 활성 사원의 급여 합
 -- salary, employment_status = 'Active'
-SELECT SUM(salary), employment_status
+SELECT SUM(salary), employment_status, full_name
 FROM employees
 WHERE employment_status = 'Active';
 
@@ -136,7 +136,7 @@ WHERE YEAR(hire_date) >= 2020;
 SELECT AVG(salary)
 FROM employees;
 
--- 모든 활성 사원의 급여 평균 조회(소수점 내림 처리)
+-- 4. 모든 활성 사원의 급여 평균 조회(소수점 내림 처리)
 -- salary, employment_status = 'Active'
 SELECT FLOOR(AVG(salary))
 FROM employees
@@ -169,7 +169,6 @@ SELECT COUNT(*)
 FROM employees E
 JOIN departments D ON E.dept_id = D.dept_id
 WHERE D.dept_code = 'DEV';
-
 -- 2) WHERE - AND
 SELECT COUNT(*)
 FROM employees E, departments D
@@ -185,11 +184,24 @@ WHERE phone IS NOT NULL;
 SELECT COUNT(phone)
 FROM employees;
 
--- 테이블에 존재하는 부서코드(dept_code)의 수를 중복 없이 조회
--- JOIN departments dept_id
+-- 테이블에 존재하는 부서코드(dept_code)의 수를
+-- 중복 없이 조회
+-- 1) JOIN - ON
 SELECT COUNT(DISTINCT dept_code)
 FROM employees E
 JOIN departments D ON E.dept_id = D.dept_id;
+-- 2) WHERE
+SELECT COUNT(DISTINCT dept_code)
+FROM employees E, departments D
+WHERE E.dept_id = D.dept_id;
   
+-- employees 테이블에 존재하는 남자 사원의 수
+SELECT COUNT(gender)
+FROM employees
+WHERE gender = 'M';
+
+
+
+
 
 
