@@ -130,7 +130,8 @@ SELECT * FROM employees;
 -- 직원이 2명 이상인 부서 보기
 SELECT dept_id, COUNT(*)
 FROM employees
-WHERE COUNT(*) >= 2; -- Error Code: 1111. Invalid use of group function
+WHERE COUNT(*) >= 2; 
+-- Error Code: 1111. Invalid use of group function
 -- 그룹 함수를 잘못 사용했을 때 나타나는 문제
 
 -- dept_id 로 묶은 그룹에서 총 인원이 2명 이상인 부서 아이디만 조회
@@ -221,10 +222,66 @@ select * from stores;
 -- 각 카테고리별 평균 배달비 구하기
 -- null 존재하는지 확인하고, null 이 아닌 배달비만 조회
 SELECT category, FLOOR(AVG(delivery_fee)) AS `평균 배달비`
-FROM stores
+FROM store
 WHERE delivery_fee IS NOT NULL
 GROUP BY category
 ORDER BY `평균 배달비` DESC;
+
+# 실습문제
+select * from stores;
+-- FROM stores
+-- 평점이 4.5 이상인 가게들만 골라서 카테고리별 개수 구하기
+SELECT category, COUNT(*)
+FROM stores
+WHERE rating >= 4.5  -- 치킨 카테고리에서 가게별로 4.5 이상인 가게들만 조회하기 (그룹별 집계 X, 조건에 해당하는 가게만 선별할 것이므로 HAVING 이 아니라 WHERE 사용)
+GROUP BY category;
+
+-- 카테고리별 평점을 모은 후에, 
+-- 평점이 4.5 이상인 그룹만 카테고리 조회
+SELECT category, COUNT(*)
+FROM stores
+GROUP BY category
+HAVING AVG(rating) >= 4.5; 
+/*
+1164 : SELECT 문에서 콤마(,) 다음에 특정 컬럼명을 작성하지 않았을 때 발생하는 에러
+*/
+
+-- 배달비가 NULL 이 아닌 가게들만으로 카테고리별 평균 평점 구하기
+-- FUNCTION : COUNT(), ROUND(AVG(rating), 2)
+SELECT category, ROUND(AVG(rating), 2)
+FROM stores
+WHERE delivery_fee IS NOT NULL
+GROUP BY category;
+/*
+SELECT category, ROUND(AVG(rating), 2)
+FROM stores
+GROUP BY category
+HAVING delivery_fee IS NOT NULL; -- HAVING 에는 집계함수로 처리된 값을 자주 사용함.
+*/
+
+
+-- 가게가 3개 이상인 카테고리만 보기
+-- 개수를 내림차순 정렬
+SELECT category, COUNT(*) AS `가게 수`
+FROM stores
+GROUP BY category
+HAVING COUNT(*) >= 3
+ORDER BY `가게 수` DESC;
+
+-- 평균 배달비가 3000원 이상인 카테고리 구하기
+SELECT category, FLOOR(AVG(delivery_fee)) AS `평균 배달비`
+FROM stores
+WHERE delivery_fee IS NOT NULL
+GROUP BY category
+HAVING AVG(delivery_fee) >= 3000
+ORDER BY `평균 배달비`;
+
+-- 가게별로 메뉴가 몇 개씩 존재하는지 조회
+-- 가게명, 카테고리, 메뉴 개수 조회
+SELECT S.name, S.category, COUNT(*) AS `메뉴 개수`
+FROM stores S, menus M
+WHERE S.id = M.store_id
+GROUP BY S.name, S.category;
 
 
 
