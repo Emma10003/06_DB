@@ -173,8 +173,58 @@ WHERE E.dept_id = D.dept_id
 GROUP BY D.dept_name
 HAVING AVG(E.salary) >= 80000000;
 
+SELECT * FROM departments;
 
+/*********************************************************
+수업용_SCRIPT_2를 활용하여 GROUP BY HAVING 실습하기
 
+< 기본 문법 순서 >
+SELECT 컬럼명, 집계함수()
+FROM 테이블이름
+WHERE 조건      -- 개별 행 하나씩에 대한 조건
+GROUP BY 컬럼명 -- 그룹 만들기 (SELECT, ORDER BY 에서 집계함수로 작성되지 않은 컬럼 명칭 모두 작성)
+HAVING 집계조건 -- 조회할 그룹에 대한 조건
+ORDER BY        -- 정렬 기준
+* 주의할 점 : 숫자값에 NULL 이 존재한다면 WHERE 로 NULL 을 먼저 필터링 처리!!
+               ex) WHERE 컬럼명 IS NOT NULL
+              과 같이 NULL 이 존재하지 않는 데이터들을 통해서 조회
+-------------------------------------------
+< 집계함수 >
+COUNT(*) : 개수 세기
+AVG()    : 합에 대한 평균
+MAX()    : 최대값
+MIN()    : 최소값
+-------------------------------------------
+테이블 구조
+stores (가게 테이블)
+번호, 가게명, 카테고리, 평점,   배달비
+id,   name,   category, rating, delivery_fee
+
+menus (메뉴 테이블)
+메뉴번호, 가게번호, 메뉴명, 가격,  인기메뉴여부
+id,       store_id, name,   price, is_popular
+*********************************************************/
+
+USE delivery_app;
+
+-- stores 테이블에서
+-- 각 카테고리 별로 가게가 몇 개씩 존재하는지 확인하기
+-- select categroy as 가게수
+SELECT category, COUNT(*) AS `가게 수`
+FROM stores
+GROUP BY category
+ORDER BY `가게 수` DESC;
+
+select * from stores;
+
+-- stores 테이블에서
+-- 각 카테고리별 평균 배달비 구하기
+-- null 존재하는지 확인하고, null 이 아닌 배달비만 조회
+SELECT category, FLOOR(AVG(delivery_fee)) AS `평균 배달비`
+FROM stores
+WHERE delivery_fee IS NOT NULL
+GROUP BY category
+ORDER BY `평균 배달비` DESC;
 
 
 
