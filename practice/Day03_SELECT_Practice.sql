@@ -6,7 +6,16 @@ USE chun_university;
 -- WHERE 절에 LENGTH(STUDENT_NAME) = 3 조건 추가
 SELECT student_no, student_name
 FROM student
-WHERE LENGTH(student_name) >= 3;
+WHERE LENGTH(student_name) = 9;
+-- 김 한 글자가 3byte 이므로 성 + 이름 3글자 모두 조회할 때는 9byte 크기를 조회
+
+/****************
+영어(대소문자) 와 숫자 : 한 글자 당 1byte
+특수문자나 비영어 문자 : 한 글자 당 2 ~ 4byte
+한글, 일본, 중국어 와 같은 문자 : 한 글자 당 3byte
+이모지 : 4byte
+****************/
+-- byte 길이
 
 
 -- Q2. 문제: STUDENT 테이블에서 주민등록번호 앞 6자리를 생년월일로 하여
