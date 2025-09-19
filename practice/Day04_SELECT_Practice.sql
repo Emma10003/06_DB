@@ -1,4 +1,19 @@
 USE delivery_db;
+
+/*******************
+customer_id, customer_name, email,  password, phone,      address, created_at
+고객 아이디, 고객명,        이메일, 비밀번호, 핸드폰번호, 주소,    가입일
+
+store_id,   store_name, address, phone, description, min_order_amount, delivery_fee, rating, opening_hours, created_at
+가게아이디, 가게명,     주소,    번호,  설명,        최소주문금액,     배달비,       평점,   영업시간,      오픈일
+
+menu_id,    store_id,   menu_name, description, price, is_popular
+메뉴아이디, 가게아아디, 메뉴이름,  메뉴설명,    가격,  인기유무
+
+* 보통 is 명칭을 앞에 사용하면 boolean 값을 의미. SQL, Java, JavaScript, Python 등 어떤 언어에서든
+* 개발자들이 많이 활용하는 변수 명칭 방식
+*******************/
+
 -- 문제 1
 -- CUSTOMERS 테이블에서 고객명과 이메일 길이를 조회하고, 이메일 길이를 기준으로 내림차순 정렬하시오.
 SELECT customer_name AS `고객명`, LENGTH(email) AS `이메일 길이`
@@ -9,7 +24,8 @@ ORDER BY `이메일 길이` DESC;
 -- STORES 테이블에서 가게명의 길이가 10자 이상인 가게들의 이름과 글자 수를 조회하시오.
 SELECT store_name AS `가게명`, LENGTH(store_name) AS `가게명 글자 수`
 FROM stores
-WHERE LENGTH(store_name) >= 10;
+WHERE LENGTH(store_name) >= 10
+ORDER BY LENGTH(store_name);
 
 -- 문제 3
 -- CUSTOMERS 테이블에서 이메일에서 '@' 문자의 위치를 찾아 고객명, 이메일, '@위치'로 조회하시오.
@@ -28,19 +44,25 @@ FROM customers;
 
 -- 문제 6
 -- MENUS 테이블에서 메뉴명에 '치킨'이라는 단어가 포함된 메뉴들을 조회하고, '치킨'을 'Chicken'으로 변경한 결과도 함께 보여주시오.
-SELECT menu_name, REPLACE(menu_name, '치킨', 'Chicken')
+SELECT menu_name, REPLACE(menu_name, '치킨', 'Chicken') AS `변경된 메뉴명`
 FROM menus
 WHERE menu_name LIKE '%치킨%';
 
 -- 문제 7
 -- STORES 테이블에서 가게명에 '점'을 'Store'로 바꾸어 조회하시오. (기존명, 변경명)
-SELECT store_name AS `기존명`, REPLACE(store_name, '점', 'Store')
+SELECT store_name AS `기존명`, REPLACE(store_name, '점', 'Store') AS `변경된 가게명`
+FROM stores;
+-- REGEXP_REPLACE() : 정규식을 이용해서 특정 명칭 변경. 
+-- 00$ : 00단어 중 마지막으로 조회되는 단어만 변경
+-- ^00 : 00단어를 시작으로 조회되는 단어만 변경
+SELECT store_name AS `기존명`, REGEXP_REPLACE(store_name, '점$', 'Store') AS `변경된 가게명`
 FROM stores;
 
 -- 문제 8
 -- MENUS 테이블에서 가격을 1000으로 나눈 나머지를 구하여 메뉴명, 가격, 나머지를 조회하시오.
 SELECT menu_name, price, MOD(price, 1000) AS `나머지`
-FROM menus;
+FROM menus
+WHERE MOD(price, 1000) != 0; -- 나머지가 0인 값은 모두 제외하고 조회
 
 -- 문제 9
 -- ORDERS 테이블에서 총 가격의 절댓값을 구하여 주문번호, 총가격, 절댓값을 조회하시오.
@@ -76,7 +98,7 @@ FROM stores;
 
 -- 문제 15
 -- MENUS 테이블에서 인기메뉴 여부를 숫자로 변환하여 조회하시오. (TRUE=1, FALSE=0)
-SELECT is_popular
+SELECT menu_name, is_popular
 FROM menus;
 
 -- 문제 16
@@ -92,7 +114,7 @@ WHERE order_status = 'Delivered';
 
 -- 문제 18
 -- 가장 비싼 메뉴 가격과 가장 저렴한 메뉴 가격을 조회하시오.
-SELECT MAX(price), MIN(price)
+SELECT MAX(price) AS `가장 비싼 메뉴`, MIN(price) AS `가장 저렴한 메뉴`
 FROM menus;
 
 -- 문제 19
@@ -134,9 +156,11 @@ GROUP BY order_status;
 
 -- 문제 25
 -- 가게별 인기메뉴 개수와 일반메뉴 개수를 각각 구하시오.
-SELECT is_popular, COUNT(*)
-FROM menus
-GROUP BY is_popular;
+SELECT S.store_name, SUM(M.is_popular) AS `인기메뉴개수`,
+		COUNT(*) - SUM(M.is_popular) AS `전체메뉴에서 인기메뉴개수를 빼면 인기없는 일반메뉴개수`
+FROM stores S, menus M
+WHERE S.store_id = M.store_id
+GROUP BY S.store_name;
 
 -- 문제 26
 -- 메뉴가 3개 이상인 가게들의 가게명과 메뉴 개수를 조회하시오.
