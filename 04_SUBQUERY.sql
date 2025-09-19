@@ -290,6 +290,12 @@ ORDER BY name;
            다중행 서브쿼리 실습문제 (1 ~ 10 문제)
            IN / NOT IN 연산자
 ***********************************************************/
+
+-- ================================
+-- IN 연산자     : 포함하고 싶을 때 사용
+-- NOT IN 연산자 : 제외하고 싶을 때 사용
+-- ================================
+
 -- 문제 1: 카테고리별 최고 평점 매장들 조회
 -- 1단계: 카테고리별 최고 평점들 확인
 SELECT MAX(rating)
@@ -303,15 +309,28 @@ GROUP BY category; -- 카테고리별로 무엇을 했는지 알 수 없음
 -- 카테고리별로 그룹을 짓고, 그룹별 최고 평점만 조회하여
 -- 평점을 기준으로 가게 데이터 조회
 -- 2단계: 1단계 결과를 조합하여 각 카테고리의 최고 평점 매장들 가져오기
-SELECT *
+SELECT name, category, rating
 FROM stores
-WHERE rating IN (SELECT MAX(rating)
+WHERE (category,rating) IN (SELECT category, MAX(rating)
 				FROM stores
 				GROUP BY category);
 
 
-
 -- 문제 2: 배달비가 가장 저렴한 매장들의 인기 메뉴들 조회
+-- 0단계
+SELECT MIN(delivery_fee) FROM stores; -- MIN() 함수에서 자동으로 NULL값은 생략된다.
+
+-- WHERE 의 특성 (Error Code: 1111. Invalid use of group function)
+-- WHERE 절에는 MIN(), MAX(), AVG() 등의 집계함수를 직접적으로 사용할 수 없음!
+-- WHERE 절은 테이블의 각 행을 하나씩 필터링하는 단계
+-- MIN()은 WHERE 절의 필터링이 끝난 다음에 데이터를 그룹화해서 최소값을 계산.
+-- => WHERE 절이 실행되는 시점에는 아직 MIN(delivery_fee) 값이 무엇인지 알 수 없기 때문에 문제 발생
+/*
+SELECT id
+FROM stores
+WHERE delivery_fee = MIN(delivery_fee);
+*/
+
 -- 1단계: 가장 저렴한 배달비 매장 ID들 확인
 SELECT DISTINCT id
 FROM stores
@@ -319,10 +338,26 @@ WHERE delivery_fee = (SELECT MIN(delivery_fee) FROM stores);
 -- 2단계: 1단계 결과를 조합하여 해당 매장들의 인기 메뉴들 가져오기
 SELECT id, name, description, price
 FROM menus
-WHERE is_popular = TRUE
-AND store_id IN (SELECT DISTINCT id
+WHERE store_id IN (SELECT DISTINCT id
 					FROM stores
 					WHERE delivery_fee = (SELECT MIN(delivery_fee) FROM stores));
+/*
+AND is_popular = TRUE;
+안 써도
+20	맵슐랭	매콤달콤한 소스에 마요네즈가 더해진 치킨	19000
+31	블랙타이거 슈림프 피자 (L)	통통한 블랙타이거 슈림프가 가득 올라간 피자	35900
+32	포테이토 피자 (L)	고소한 감자와 부드러운 마요네즈의 조화	27900
+33	치즈 볼로네제 스파게티	진한 볼로네제 소스와 치즈의 만남	9800
+36	고구마 피자 (L)	달콤한 고구마 무스와 토핑이 듬뿍	28900
+
+	출력 결과로 is_popular 가 true 인 것들만 나오는 이유는
+	현재 데이터가 모두 is_popular 만 존재하기 때문!
+	데이터가 추가적으로 is_popular 가 false 인 데이터만 들어온다면
+	AND is_popular = TRUE; 필수로 작성해야 1인 데이터만 조회가 될 것
+	* TRUE = 1
+	* FALSE = 0
+*/
+
 
 -- 문제 3: 평점이 가장 높은 매장들의 모든 메뉴들 조회
 -- 1단계: 가장 높은 평점 매장 ID들 확인
@@ -447,13 +482,50 @@ WHERE s.id IN (SELECT store_id
 -- 난이도 중 : #4 ~ #8
 
 
+-- ================================
+-- ANY 연산자 : 하나라도 조건을 만족하면 참
+-- 여러 값 중 하나라도 만족하면 TRUE
+-- 치킨 카테고리에서 배달비가 어떤 기준보다 작으면 만족하거나 어떤 기준보다 크면 만족
+-- ================================
+-- 치킨집 중 배달비가 3천원 이하로 저렴한 매장들 확인
+-- 1단계 : 치킨집들의 배달비 확인
+SELECT delivery_fee
+FROM stores
+WHERE category = '치킨'
+AND delivery_fee IS NOT NULL;
+
+-- 2단계 : 특정 값보다 작으면 조건 만족
+-- 배달비가 3천원 이하인 매장들 조회
+SELECT *
+FROM stores
+WHERE delivery_fee <= 3000 AND delivery_fee IS NOT NULL;
+
+-- ANY 로 조합하여 치킨 카테고리에서 배달비 중 최저값보다 작은 가게들의 이름, 카테고리, 배달비 조회
+SELECT name, category, delivery_fee
+FROM stores
+WHERE delivery_fee < ANY(
+						SELECT delivery_fee
+						FROM stores
+						WHERE category = '치킨'
+						AND delivery_fee IS NOT NULL)
+AND delivery_fee IS NOT NULL
+ORDER BY delivery_fee;
+-- 여기에 최저값을 나타내는 코드가 어디있음...?
 
 
--- 3. ANY 연산자 - IS NULL, IS NOT NULL
+-- ================================
+-- ALL 연산자 : 모든 조건을 만족해야 참
+-- ================================
 
 
+-- ================================
+-- EXISTS 연산자 : 존재하는 것을 찾기
+-- ================================
 
 
+-- ================================
+-- NOT EXISTS 연산자 : 존재하지 않는 것을 찾기
+-- ================================
 
 
 
