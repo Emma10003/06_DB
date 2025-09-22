@@ -65,6 +65,11 @@ INSERT INTO member
 		VALUES (
         NULL, 'sarah_lee', 'passwordabc', 'sarah@example.com', '박미영', '010-3333-9999', '1995-03-10', 'F', '광주시 서구', NOW(), 'INACTIVE'
         );
+        
+INSERT INTO member
+		VALUES (
+        NULL, 'sarah_lee', 'abc1234', 'meyoung@example.com', '오미영', '010-4567-1234', '1998-04-10', 'F', '서울시 서초구', NOW(), 'ACTIVE'
+        );
 
 
 
@@ -90,15 +95,21 @@ SELECT * FROM member;
 -- INSERT 구문 필수 컬럼만 입력 -> 모든 컬럼에 데이터를 넣지 않고
 -- 컬럼명칭 옆에 NOT NULL 인 컬럼명칭만 지정하여 데이터를 넣을 수 있음.
 -- 주의할 점 : NOT NULL 은 필수로 데이터를 넣어야 하는 공간이기 때문에 생략할 수 없음!
+
+-- 하나의 INSERT 구문 추가하는 방법
+-- INSERT INTO 테이블이름 (필수컬럼명1, 필수컬럼명2, 필수컬럼명3, ...)
+-- 		  VALUES (데이터1, 데이터1, 데이터1, ...);
+
+-- 두 개 이상의 INSERT 구문 추가하는 방법
 -- INSERT INTO 테이블이름 (필수컬럼명1, 필수컬럼명2, 필수컬럼명3, ...)
 -- 		  VALUES 
 -- 			(데이터1, 데이터1, 데이터1, ...),
 -- 		    (데이터2, 데이터2, 데이터2, ...),
 -- 		    (데이터3, 데이터3, 데이터3, ...);
-
--- INSERT INTO 테이블이름 (필수컬럼명1, 필수컬럼명2, 필수컬럼명3, ...)
--- 		  VALUES (데이터1, 데이터1, 데이터1, ...);
 -- 콤마(,)로 구분하여 여러 행을 한 번에 입력 후 데이터를 저장할 수 있다.
+-- AUTO_INCREMENT 가 설정된 컬럼은 번호가 자동으로 부여될 것이고,
+-- 이외 컬럼데이터는 모두 NULL 이나 0의 값으로 데이터가 추가될 것이다.
+-- 여기서 DEFAULT 설정된 데이터는, DEFAULT 로 설정된 기본 데이터가 추가될 것이다.
 -- ===========================
 
 
@@ -109,29 +120,56 @@ SELECT * FROM member;
 -- 나머지 컬럼들은 기본값 또는 NULL이 됩니다.
 
 /*
-CREATE TABLE member (
-    member_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    name VARCHAR(50) NOT NULL,
-    phone VARCHAR(20),
-    birth_date DATE,
-    gender ENUM('M', 'F', 'Other'),
-    address TEXT,
-    join_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('ACTIVE', 'INACTIVE', 'SUSPENDED') DEFAULT 'ACTIVE'
-);
-
 -- 데이터 추가 후 SELECT * FROM member; 를 통해 저장한 데이터 조회
 회원1: user_basic1, basicpass123, basic1@email.com, 기본유저1
 회원2: user_basic2, basicpass456, basic2@email.com, 기본유저2  
 회원3: user_basic3, basicpass789, basic3@email.com, 기본유저3
 */
-INSERT INTO member (member_id, username, password, email, name)
-		VALUES 
-        (NULL, 'user_basic1', 'basicpass123', 'basic1@email.com', '기본유저1'),
-		(NULL, 'user_basic2', 'basicpass456', 'basic2@email.com', '기본유저2'),
-		(NULL, 'user_basic3', 'basicpass789', 'basic3@email.com', '기본유저3');
+INSERT INTO member (username, password, email, name)
+		VALUES
+        ('user_basic1', 'basicpass123', 'basic1@email.com', '기본유저1'),
+		('user_basic2', 'basicpass456', 'basic2@email.com', '기본유저2'),
+		('user_basic3', 'basicpass789', 'basic3@email.com', '기본유저3');
 
 SELECT * FROM member;
+
+
+-- =============================================
+-- INSERT INTO 테이블명 (컬럼명, ...) VALUES(데이터, ...)
+-- 특정 컬럼만 지정하여 데이터 저장 (필수 + 선택사항)
+-- =============================================
+INSERT INTO member (username, password, email, name, phone, gender)
+	VALUES ('admin_user', 'admin_pass', 'admin@gamil.com', '관리자', '010-4689-1357', 'M');
+
+
+-- =============================================
+-- INSERT INTO 로 데이터 저장하는 작업을 할 때
+-- 컬럼 명칭과 넣고자하는 데이터 값이 일치하면 넣는 데에 문제가 없음
+-- 데이터 일치의 기준은 컬럼명칭에 작성된 자료형과, 자료형 크기가 기준.
+-- =============================================
+INSERT INTO member (password,     username,    email,             phone,     name,           gender)
+			VALUES('guest_pass1', 'guest_user','guest1@egmail.com', '게스트1', '010-2222-8888', 'F');
+
+INSERT INTO member (password,     username,    email,                 phone,          name,        gender)
+			VALUES('guest_pass2', 'guest_user2','guest2@egmail.com', '010-2222-8888', '게스트2', 'F');
+
+select * from member;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
