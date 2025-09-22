@@ -304,7 +304,6 @@ SET email = 'hong1234@gmail.com',
 	address = '인천광역시 남구'
 WHERE username = 'hong1234444444';
 
-SELECT * FROM member;
 
 -- 1175 : 모든 데이터를 한 번에 수정하거나 삭제하는 것을 방지하기 위한 MySQL 의 안전장치!!
 -- 안전모드 비활성화
@@ -318,8 +317,29 @@ SET SQL_SAFE_UPDATES = 1;
 -- 안전모드는 존재하는 이유가 있음^-^... 비활성화 해지하지 말 것!!!
 
 
+SELECT * FROM member;
 
+-- 문제 1: username이 'mike_wilson'인 이철수 회원의 이메일 주소를 'mike.w@naver.com'으로 변경하세요.
+UPDATE member
+SET email = 'mike.w@naver.com'
+WHERE username = 'mike_wilson';
 
+SELECT * FROM member WHERE username = 'mike_wilson';
+
+-- 문제 2: member_id가 5번인 회원의 상태(status)를 'SUSPENDED'로, 주소(address)를 '확인 필요'로 변경하세요.
+UPDATE member
+SET status = 'SUSPENDED',
+	address = '확인 필요'
+WHERE member_id = 5;
+
+SELECT * FROM member WHERE member_id = 5;
+
+-- 문제 3: 1990년 이전에 태어난 모든 회원의 상태(status)를 'INACTIVE'로 변경하세요.
+UPDATE member
+SET status = 'INACTIVE'
+WHERE birth_date < '1990-01-01';
+
+SELECT * FROM member WHERE YEAR(birth_date) < 1990;
 
 
 
