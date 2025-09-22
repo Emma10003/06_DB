@@ -507,10 +507,63 @@ WHERE delivery_fee < ANY(
 						SELECT delivery_fee
 						FROM stores
 						WHERE category = '치킨'
-						AND delivery_fee IS NOT NULL)
+						AND delivery_fee IS NOT NULL
+                        )
 AND delivery_fee IS NOT NULL
 ORDER BY delivery_fee;
 -- 여기에 최저값을 나타내는 코드가 어디있음...?
+
+-- 문제 1: 한식집들 중 어떤 매장보다 평점이 높은 매장들을 찾아주세요.
+-- 1단계: 한식집들의 평점 확인
+SELECT *
+FROM stores
+WHERE category = '한식'
+AND rating IS NOT NULL;
+
+-- 2단계: 한식집 중 어느 매장보다든 높은 평점의 매장들 (가장 작은 값 4.2보다 크면 ANY 조건 만족)
+SELECT * 
+FROM stores
+WHERE rating > 4.2
+AND rating IS NOT NULL;
+
+-- 3단계: ANY로 조합
+SELECT *
+FROM stores
+WHERE rating > ANY (
+				SELECT rating FROM stores
+                WHERE category = '한식'
+                AND rating IS NOT NULL
+                )
+AND rating IS NOT NULL
+AND category NOT IN ('한식');  -- 한식을 제외한 카테고리 조회 추가
+
+
+-- 문제 2: 일식집들 중 배달비가 최고점을 기준으로 저렴한 매장들을 찾아주세요.
+-- 1단계: 일식집들의 배달비 확인
+SELECT *
+FROM stores
+WHERE category = '일식';
+
+-- 2단계: 일식집 중 어느 매장보다든 저렴한 매장들 (가장 큰 값 4000원보다 작으면 ANY 조건 만족)
+SELECT *
+FROM stores
+WHERE delivery_fee < 4000
+AND delivery_fee IS NOT NULL;
+
+-- 3단계: ANY로 조합
+SELECT *
+FROM stores
+WHERE delivery_fee < ANY (
+						SELECT delivery_Fee
+                        FROM stores
+                        WHERE category = '일식'
+                        )
+AND delivery_fee IS NOT NULL;
+
+
+
+
+
 
 
 -- ================================
