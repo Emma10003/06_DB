@@ -520,8 +520,50 @@ ORDER BY delivery_fee;
 
 -- ================================
 -- EXISTS 연산자 : 존재하는 것을 찾기
+-- EXISTS = TRUE/FALSE 만 봄
+-- 			존재 유무를 단순히 확인하기 때문에 1과 같은 숫자값으로 빠르게 데이터를 가져올 수 있도록 설정
+-- 보통 TRUE = 1  FALSE = 0
+-- 존재하면 1이라는 숫자가 몇 개 뜨는지만 조회할 때 주로 사용
+-- 컬럼 내부값은 궁금하지 않고, 단순히 존재유무에 대한 결과를 보고싶을 때 사용하는 단순 숫자 표기
+-- 숫자값은 개발자가 넣고싶은 숫자값을 마음껏 넣어도 되지만 보통 존재할 때는 1 존재하지 않을 때는 0 사용
+-- EXISTS 사용 방법
+/*
+WHERE EXISTS (
+	SELECT 1
+    FROM 다른 테이블 별칭
+    WHERE 별칭.외래키 = 현재테이블별칭.기본키
+    AND 추가조건들
+    )
+*/
 -- ================================
 
+-- 설명(description)이 있는 메뉴를 파는 매장들을 찾아주세요.
+-- 1단계 : 설명이 있는 메뉴를 가진 매장 ID들 확인
+SELECT store_id
+FROM menus
+WHERE description IS NOT NULL;
+-- 2단계 : EXISTS 와 1을 활용하여 조합
+-- EXISTS = TRUE/FALSE 만 봄
+-- 			존재유무를 단순히 확인하기 때문에 1과 같은 숫자값으로 빠르게 데이터를 가져올 수 있도록 설정
+-- store_id 연결 조건이 없기 때문에 단순히 설명이 있는 메뉴가 전체에서 존재하나요? 만 확인하는 상태
+SELECT *
+FROM stores
+WHERE EXISTS (
+	SELECT store_id
+	FROM menus
+	WHERE description IS NOT NULL
+); -- 설명이 없는 메뉴까지 모두 합쳐져서 매장이 조회됨
+
+-- 매장 중에서 메뉴에 설명이 존재하는 데이터만 조회
+-- m.store_id = s.id  => 메뉴와 가게가 서로 연결된 데이터만 조회할 수 있도록 설정
+SELECT *
+FROM stores s
+WHERE EXISTS (
+	SELECT store_id
+	FROM menus m
+	WHERE m.store_id = s.id
+    AND m.description IS NOT NULL
+);
 
 -- ================================
 -- NOT EXISTS 연산자 : 존재하지 않는 것을 찾기
