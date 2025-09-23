@@ -3,17 +3,16 @@ USE delivery_db;
 -- 문제 1
 -- CUSTOMERS 테이블에 새로운 고객을 추가하시오. (모든 컬럼 포함)
 -- 고객명: 조민수, 이메일: minsoo.jo@gmail.com, 비밀번호: min123!, 전화번호: 010-2468-1357, 주소: 대전시 유성구 대학로 99
-INSERT INTO customers (customer_name, email, password, phone, address)
-VALUES ('조민수', 'minsoo.jo@gmail.com', 'min123!', '010-2468-1357', '대전시 유성구 대학로 99');
+SELECT * FROM customers;
+INSERT INTO customers
+VALUES (NULL, '조민수', 'minsoo.jo@gmail.com', 'min123!', '010-2468-1357', '대전시 유성구 대학로 99', NOW());
 
 -- 문제 2
 -- CATEGORIES 테이블에 새로운 카테고리들을 한 번에 추가하시오.
 -- Vietnamese (베트남 요리), Western (양식), Salad (샐러드)
 select * from categories;
 INSERT INTO categories (category_name)
-VALUES ('Vietnamese'),
-		('Western'),
-        ('Salad');
+VALUES ('Vietnamese'), ('Western'), ('Salad');
 
 -- 문제 3
 -- STORES 테이블에 새로운 매장을 추가하시오. (모든 컬럼 포함)
@@ -31,8 +30,8 @@ VALUES ('맘스터치 대학로점', '9', '대전시 유성구 대학로 100', '
 select * from customers;
 INSERT INTO customers (customer_name, email, password, address)
 VALUES ('이수진', 'suejin@naver.com', 'sue9876', '서울시 영등포구 당산로 200'),
-		('김태원', 'taewon88@gmail.com', 'tae4567', '부산시 부산진구 서면로 150'),
-		('박소희', 'sohee@daum.net', 'hope123', '인천시 연수구 송도대로 300');
+	   ('김태원', 'taewon88@gmail.com', 'tae4567', '부산시 부산진구 서면로 150'),
+	   ('박소희', 'sohee@daum.net', 'hope123', '인천시 연수구 송도대로 300');
 
 -- 문제 5
 -- MENUS 테이블에 필수 컬럼만으로 메뉴들을 추가하시오. (store_id는 1번 매장 사용)
@@ -40,8 +39,8 @@ VALUES ('이수진', 'suejin@naver.com', 'sue9876', '서울시 영등포구 당�
 SELECT * FROM menus;
 INSERT INTO menus (store_id, menu_name, price)
 VALUES (1, '치킨마요덮밥', 8500),
-		(1, '새우튀김', 15000),
-        (1, '김치찌개', 7000);
+	   (1, '새우튀김', 15000),
+       (1, '김치찌개', 7000);
 
 -- 문제 6
 -- CUSTOMERS 테이블에 컬럼 순서를 바꿔서 고객 정보를 입력하시오.
@@ -73,7 +72,6 @@ UPDATE stores
 SET delivery_fee = 2500,
 	min_order_amount = 15000
 WHERE store_name = 'BHC치킨 역삼점';
-
 
 
 -- 문제 10
@@ -168,10 +166,15 @@ VALUES (14, 7, 'Pending', 13200, '경기도 성남시 분당구 판교로 500');
 -- 문제 19
 -- '동대문엽기떡볶이 신림점' 매장의 모든 메뉴 가격을 10% 인상하시오. (가격 × 1.1로 계산)
 SELECT * FROM menus WHERE store_id = 6;
-SELECT * FROM stores WHERE store_id = 6; -- 6
+SELECT * FROM stores WHERE store_id = 6; -- store_id 조회하고, 모든 메뉴 가격을 1.1 인상
+UPDATE menus
+SET price = price / 1.1
+WHERE store_id = 6;
+
+-- UPDATE SUBQUERY 이용해서 동대문엽기떡볶이 신림점 조회한 후 모든 메뉴가격 10% 인상
 UPDATE menus
 SET price = price * 1.1
-WHERE store_id = 6;
+WHERE store_id = (SELECT store_id FROM stores WHERE store_name = '동대문엽기떡볶이 신림점');
 
 -- 문제 20
 -- 전화번호가 등록되지 않은(NULL) 모든 고객의 전화번호를 '미등록'으로 변경하시오.
@@ -180,19 +183,42 @@ UPDATE customers
 SET phone = '미등록'
 WHERE phone IS NULL;
 /* error 1062 : Duplicate entry '미등록' for key 'customers.phone' -> phone 컬럼이 UNIQUE라서... */
+-- UNIQUE 는 NULL 값도 모든 컬럼에서 1개만 존재해야 함
+-- 빈 칸 마저도 고유하게 단일로 존재해야 하는 데이터.
 
 -- 문제 21
 -- 'gmail.com'이 포함된 이메일을 사용하는 고객들의 주소에 '[Gmail 사용자]' 표시를 추가하시오.
+UPDATE customers
+SET address = CONCAT('[Gmail 사용자]', address)
+WHERE email LIKE '%gmail.com%';
 
+SET SQL_SAFE_UPDATES = 1;
 
 -- 문제 22
 -- MENUS 테이블에서 설명(description)이 NULL인 메뉴들의 설명을 '설명 준비중'으로 변경하시오.
+SELECT * FROM menus WHERE description IS NULL;
+UPDATE menus
+SET description = '설명 준비중'
+WHERE description IS NULL;
+
+SET SQL_SAFE_UPDATES = 1;
 
 -- 문제 23
 -- ORDERS 테이블에서 고객 요청사항(customer_request)이 NULL인 주문들을 '특별 요청 없음'으로 변경하시오.
+SELECT * FROM orders;
+UPDATE orders
+SET customer_request = '특별 요청 없음'
+WHERE customer_request IS NULL;
+
+SET SQL_SAFE_UPDATES = 1;
 
 -- 문제 24
 -- 가격이 20000원 이상인 모든 메뉴를 인기메뉴(is_popular = TRUE)로 변경하시오.
+UPDATE menus
+SET is_popular = TRUE
+WHERE price >= 20000;
+
+SET SQL_SAFE_UPDATES = 0;
 
 -- ===========================
 
