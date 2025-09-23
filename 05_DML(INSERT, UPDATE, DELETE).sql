@@ -344,4 +344,79 @@ SELECT * FROM member WHERE YEAR(birth_date) < 1990;
 
 
 
+-- =============================================
+-- DELETE
+-- 테이블의 행을 삭제하는 구문
+-- [작성법]
+-- DELETE FROM 테이블명 WHERE 조건설정
+-- 만약 WHERE 조건을 설정하지 않으면 모든 행이 다 삭제됨
+
+-- DELETE 작업을 하기 전에 개발자가 잠시 수행하는 작업 중 하나
+-- 가볍게 저용량의 테이블을 삭제할 경우 많이 사용
+
+-- 테스트용 테이블 생성 (기존 stores 테이블 복사)
+CREATE TABLE stores_copy AS SELECT * FROM stores;
+-- 테스트용 테이블 삭제
+DROP TABLE stores_copy;
+-- =============================================
+use delivery_app;
+CREATE TABLE stores_copy AS SELECT * FROM stores;
+
+SELECT @sql_mode; -- sql에서 아무런 설정이 되어있지 않은 상태
+
+SELECT *
+FROM stores_copy;
+
+-- AUTO INCREMENT 컬럼에 NULL 값이 되었는데 (# Error Code: 1048. Column 'id' cannot be null)
+-- 아래에서는 NULL 은 안 되고 DEFAULT 로 설정하니 데이터 저장이 됨.
+INSERT INTO stores_copy
+VALUES (DEFAULT, '박말숙치킨', '치킨', '서울시 강남구 테스트로 999', '02-999-9999', 4.8, 3000);
+
+-- member 테이블은 NULL 이 되고, stores_copy 는 NULL 로 저장할 수 없는 이유
+-- member 테이블은 직접 개발자가 CREATE TABLE 부터 모두 작성해서 만든 SQL 테이블.
+-- stores_copy 테이블은 만들어진 테이블을 가볍게 복제한 상태. 
+-- => AUTO_INCREMENT 와 같은 컬럼 설정처럼 세세한 특징은 복제되지 않음.
+-- 속성은 추가로 설정해야 함.
+-- 속성까지 모두 복제하려면 아래와 같은 방법 사용
+CREATE TABLE stores_copy_2 LIKE stores;
+INSERT INTO stores_copy_2 SELECT * FROM stores;
+
+INSERT INTO stores_copy_2
+VALUES (NULL, '박말숙치킨', '치킨', '서울시 강남구 테스트로 999', '02-999-9999', 4.8, 3000);
+
+SELECT * FROM stores_copy_2;
+
+-- stores_copy_2
+SELECT * FROM stores_copy_2 WHERE delivery_fee >= 4000;
+-- 배달비가 4천원 이상인 가게들 삭제
+DELETE FROM stores_copy_2
+WHERE delivery_fee >= 4000;
+SET SQL_SAFE_UPDATES = 1;
+
+-- stores_copy_2 에서 평점이 4.5 미만이고 카테고리가 치킨인 매장 모두 삭제
+
+-- stores_copy_2 에서 전화번호가 NULL 인 매장 삭제
+
+-- stores_copy_2 TABLE 자체 모두 삭제
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
