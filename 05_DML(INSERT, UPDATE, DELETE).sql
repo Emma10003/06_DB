@@ -394,10 +394,25 @@ WHERE delivery_fee >= 4000;
 SET SQL_SAFE_UPDATES = 1;
 
 -- stores_copy_2 에서 평점이 4.5 미만이고 카테고리가 치킨인 매장 모두 삭제
+SELECT * FROM stores_copy_2 WHERE category = '치킨' AND rating < 4.5;
+DELETE FROM stores_copy_2
+WHERE category = '치킨'
+AND rating < 4.5; 
+-- 0 row(s) affected : 삭제하는 데에는 문제가 없고, 고객에게 '삭제할 데이터가 존재하지 않습니다' 전달
+SET SQL_SAFE_UPDATES = 1;
 
 -- stores_copy_2 에서 전화번호가 NULL 인 매장 삭제
+SELECT * FROM stores_copy_2 WHERE phone IS NULL;
+DELETE FROM stores_copy_2
+WHERE phone IS NULL;
 
 -- stores_copy_2 TABLE 자체 모두 삭제
+DROP TABLE stores_copy_2;
+
+-- 속성까지 모두 복제하여 store_dev_test 라는 명칭으로 테이블 복제
+-- DELETE FROM store_dev_test와 WHERE 을 이용하여 IN 조건으로 1,2,3 ID들 매장 삭제
+
+-- DELETE FROM store_dev_test와 WHERE 을 이용하여 이름에 치킨이 앞뒤로 포함된 매장 모두 삭제
 
 
 
