@@ -18,6 +18,16 @@ CREATE TABLE member (
     status ENUM('ACTIVE', 'INACTIVE', 'SUSPENDED') DEFAULT 'ACTIVE'
 );
 
+CREATE TABLE stores_copy (
+    id INT,
+    name VARCHAR(100),
+    category VARCHAR(50),
+    address VARCHAR(255),
+    phone VARCHAR(20),
+    rating DECIMAL(2, 1),
+    delivery_fee INT
+);
+
 SELECT * FROM member;
 -- ===========================
 -- INSERT 구문
@@ -409,12 +419,25 @@ WHERE phone IS NULL;
 -- stores_copy_2 TABLE 자체 모두 삭제
 DROP TABLE stores_copy_2;
 
+
+
+
 -- 속성까지 모두 복제하여 store_dev_test 라는 명칭으로 테이블 복제
+CREATE TABLE store_dev_test LIKE stores;
+INSERT INTO store_dev_test SELECT * FROM stores;
+
 -- DELETE FROM store_dev_test와 WHERE 을 이용하여 IN 조건으로 1,2,3 ID들 매장 삭제
+SELECT * FROM store_dev_test WHERE id IN (1, 2, 3);
+DELETE FROM store_dev_test
+WHERE id IN (1, 2, 3);
 
 -- DELETE FROM store_dev_test와 WHERE 을 이용하여 이름에 치킨이 앞뒤로 포함된 매장 모두 삭제
+SELECT * FROM store_dev_test WHERE name LIKE '%치킨%';
+DELETE FROM store_dev_test
+WHERE name LIKE '%치킨%';
+SET SQL_SAFE_UPDATES = 1;
 
-
+DROP TABLE store_dev_test;
 
 
 
