@@ -219,7 +219,6 @@ SET is_popular = TRUE
 WHERE price >= 20000;
 
 SET SQL_SAFE_UPDATES = 0;
-
 -- ===========================
 
 -- 문제 25
