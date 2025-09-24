@@ -203,6 +203,15 @@ CREATE TABLE ORDER_ITEM (
     CONSTRAINT ABC FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID)  -- 테이블 레벨의 제약조건
 );
 
+CREATE TABLE ORDER_ITEM (
+	ORDER_NO VARCHAR(20),
+    PRODUCT_ID VARCHAR(10),
+    QUANTITY INT CONSTRAINT CK_ORDER_ITEM_QUANTITY CHECK(QUANTITY >= 1),
+    ORDER_DATE DATETIME DEFAULT CURRENT_TIMESTAMP,\
+    
+    CONSTRAINT 제약조건명칭 FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID)
+);
+
 
 INSERT INTO PRODUCT VALUES ('P001', '노트북', 1200000, 10, '판매중');
 INSERT INTO PRODUCT VALUES ('P002', '마우스', 25000, 50, '판매중');
@@ -327,9 +336,45 @@ WHERE email IS NOT NULL
 GROUP BY email
 HAVING COUNT(*) > 1;
 
-DELETE FROM student
-WHERE email = 'kim2024@univ.ac.kr'
+
+-- 중복된 이메일에서 둘 중 한 명의 이메일을 수정하거나
+-- 모두 삭제
+
+-- 데이터가 키 형태가 아닐 경우에는 안전모드 해지 후 가능.
+SET SQL_SAFE_UPDATES = 0;
 -- Error Code: 1175. You are using safe update mode and you tried to update a table without a WHERE that uses a KEY column.
+DELETE FROM student
+WHERE email = 'kim2024@univ.ac.kr';
+-- Error Code: 1451. Cannot delete or update a parent row: a foreign key constraint fails (`delivery_app`, `score`, CONSTRAINT `FK_SCORE_STUDENT_ID` FOREIGN KEY (`STUDENT_ID`) REFERENCES `student` (`STUDENT_ID`))
+-- 특정 학생을 삭제하려 했지만, SCORE 테이블에 외래키를 참조하고 있어 함부로 삭제할 수 없다.
+
+-- 두 가지 방법
+-- 1. 삭제하고자 하는 데이터의 하위 데이터에 존재하는 데이터 먼저 삭제 후
+--    부모 데이터 삭제
+
+-- 2. 외래키 제약 조건을 잠시 종료하고 삭제 (추천하지 않음)
+-- 데이터 무결성 조건을 해지할 수 있으므로 실제 DB 서비스에서는 사용 금지
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 3. ON DELETE CASCADE
+-- 부모테이블에 존재하는 데이터 삭제 시, 자식테이블 또한 자동적으로 삭제될 수 있도록 설정하는 조건
+-- 예를 들어, 배달 어플 - 더조은카페 - 더조은카페메뉴
+--   더조은카페가 폐업했을 때, 카페 메뉴까지 모두 없애야 하는 상황.
+-- 	 ON DELETE CASCADE 가 만약에 걸려있다면, 더조은카페 폐업과 동시에 메뉴까지 모두 삭제하는 설정. 
+
+CREATE TABLE SCORE (
+	STUDENT_ID VARCHAR(10) PRIMARY KEY,
+    SUBJECT_ID VARCHAR(10),
+    SCORE INT CHECK (SCORE >= 0 AND SCORE <= 100),
+    SEMESTER VARCHAR(10) NOT NULL,
+    SCORE_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT FK_SCORE_STUDENT_ID FOREIGN KEY(STUDENT_ID) REFERENCES STUDENT(STUDENT_ID)
+    ON DELETE CASCADE,
+
+    CONSTRAINT FK_SCORE_SUBJECT_ID FOREIGN KEY(SUBJECT_ID) REFERENCES SUBJECT(SUBJECT_ID)
+    ON DELETE SET NULL
+);
 
 
 
