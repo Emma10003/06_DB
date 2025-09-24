@@ -149,6 +149,7 @@ ALTER TABLE department MODIFY mgr_id INT; -- MODIFY 는 이미 존재하는 컬�
 ALTER TABLE department ADD COLUMN mgr_id INT;
 
 -- department 테이블에 create_date 컬럼을 TIMESTAMP 타입으로 기본값 CURRENT_TIMESTAMP로 추가
+-- PostrgreSQL Oracle SQL server SQLLIte -> COLUMN 을 명시해주는 게 더 편함.
 SELECT * FROM department;
 ALTER TABLE department ADD COLUMN create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
@@ -156,7 +157,7 @@ ALTER TABLE department ADD COLUMN create_date TIMESTAMP DEFAULT CURRENT_TIMESTAM
 -- DML(INSERT, UPDATE, DELETE) : 컬럼 내부에 존재하는 데이터만 가능
 -- 데이터 이상의 작업을 진행할 때는 DDL(CREATE, ALTER, DROP) 에서 진행
 ALTER TABLE department DROP COLUMN create_date;
--- ERROR : 1091 의 경우 삭제해야 하는 컬럼이 존재하지 않을 때 발생
+-- ERROR : 1091 의 경우 삭제해야 하는 컬럼이 존재하지 않을 때 발생 
 
 -- 특정 컬럼의 명칭 변경 RENAME TO
 ALTER TABLE department RENAME COLUMN dept_title TO dept_name
