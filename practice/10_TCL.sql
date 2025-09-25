@@ -19,6 +19,7 @@ ROLLBACK : 메모리 버퍼(트랜잭션)에 임시 저장된 데이터 변경 �
 SAVEPOINT : 트랜잭션 내에 저장 지점을 정의하며, ROLLBACK 수행 시 전체 작업을 삭제하는 것이 아닌
 			지정한 SAVEPOINT 까지만 일부 되돌아가기 (임시저장 상태로 돌아가기)
 			[사용 방법]
+            ...
             SAVEPOINT 포인트이름1;
             ...
             SAVEPOINT 포인트이름2;
@@ -43,6 +44,10 @@ SAVEPOINT : 트랜잭션 내에 저장 지점을 정의하며, ROLLBACK 수행 �
 복잡하고 긴 작업 중 일부만 되돌리고 싶을 때 SAVEPOINT 사용해서 중간지점까지 되돌리기
 */
 -- ================================
+
+DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS events;  -- 만드는 건 events 먼저였으나 외래키로 인하여 bookings 먼저 삭제해주기
+DROP TABLE IF EXISTS attendees;
 
 CREATE TABLE events (
     event_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -93,6 +98,49 @@ COMMIT;  -- 김철수씨의 예약을 모두 확정하는 단계, 예약이 잘 
 
 select * from attendees;
 select * from events;
+select * from bookings;
+
+-- 박영희씨가 클래스 예약을 시도했지만, 좌석이 없어서 실패한 시나리오
+-- ROLLBACK;
+
+-- CTRL + S 는 저장하기와 동시에 COMMIT 상태로 저장됨.
+-- START TRANSACTION : COMMIT 하기 전까지 유효 - 어디서부터 어디까지 흐름 추적하고 COMMIT(저장 완료)되면 추적을 중단하겠다!
+START TRANSACTION;
+INSERT INTO attendees VALUES (2, '박영희', 'hee.park@gmail.com');
+select * from attendees;
+ROLLBACK;
+
+-- 일부만 성공하는 시나리오 (SAVEPOINT)
+-- 담당자가 이민준과 최지아의 예약을 동시에 진행하지만, 좌석은 1개 뿐이기 때문에
+-- 이민준 씨는 성공, 최지아 씨는 실패
+-- 이민준 예약 성공 직후 SAVEPOINT로 중간저장 해두기
+-- 최지아 예약이 실패하면 그 중간저장 지점으로 되돌아가서, 이민준 씨의 예약만 살리기
+START TRANSACTION;
+INSERT INTO attendees VALUES (3, '이민준', ' joon@gmail.com');
+select * from attendees;
+
+-- 예약하고자 하는 클래스는 동일하므로 위에서 작성한 코드 그대로 사용
+UPDATE events
+SET available_seats = available_seats - 1 -- 예약가능 좌석 1개 축소
+WHERE event_id = 1;
+
+-- 예약자 id만 수정
+INSERT INTO bookings (event_id, attendee_id)
+VALUES (1,3);
+
+SAVEPOINT booking_joon_ok;
+
+INSERT INTO attendees VALUES (4, '최지아', ' jia@gmail.com');
+
+-- 좌석을 주려 했지만 남은 좌석이 0개라 실패 (박철수 씨와 이민준 씨가 이미 좌석 예약 완료한 상태)
+-- 중간 저장지점인 이민준 성공으로 돌아가기 (SAVEPOINT booking_joon_ok 까지)
+ROLLBACK TO SAVEPOINT booking_joon_ok;
+
+-- 이민준 씨의 예약은 완료된 시점에서 최종 확정
+COMMIT;
+select * from attendees;
+
+-- 확인 결과: 이민준 예약은 완료되었지만, 최지아의 정보는 롤백되어 남아있지 않는다.
 
 
 
