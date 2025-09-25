@@ -160,9 +160,44 @@ ALTER TABLE department DROP COLUMN create_date;
 -- ERROR : 1091 의 경우 삭제해야 하는 컬럼이 존재하지 않을 때 발생 
 
 -- 특정 컬럼의 명칭 변경 RENAME TO
-ALTER TABLE department RENAME COLUMN dept_title TO dept_name
+ALTER TABLE department RENAME COLUMN dept_title TO dept_name;
 
 
+-- 테이블 삭제
+-- 다수의 SQL : DROP TABLE 테이블명 [CASCADE CONSTRAINTS];
+-- MySQL      : DROP TABLE 테이블명;
+-- 				외래키 활성화/비활성화 후 부모테이블 삭제 여부 결정
+
+DROP TABLE BOOK;
+-- ERROR 3730 : ORDER_DETAIL 테이블에서 외래키에 의해 참조되고 있음.
+-- 삭제 방법 3가지 : 자식 -> 부모 순서대로 삭제하거나
+-- 					 외래키 제약조건만 삭제
+-- 					 외래키 체크 임시 비활성화를 통해 삭제
+
+-- 방법 1을 활용한 삭제
+DROP TABLE ORDER_DETAIL;
+-- ERROR 1051 -> 알 수 없는 테이블, 존재하지 않는 테이블 (Unkown table ~...)
+DROP TABLE BOOK;
+
+-- practice_db에 있는 테이블 삭제
+-- customer, department, employee, product
+DROP TABLE CUSTOMER;
+DROP TABLE DEPARTMENT;
+DROP TABLE EMPLOYEE;
+DROP TABLE PRODUCT;
+
+DROP DATABASE practice_db;
+
+-- 모든 데이터베이스 삭제
+DROP DATABASE chun_university;
+DROP DATABASE delivery_app;
+DROP DATABASE delivery_db;
+DROP DATABASE employee_management;
+DROP DATABASE 네이버;
+DROP DATABASE 라인;
+DROP DATABASE 스노우;
+
+-- sys는 삭제 금지!!!
 
 
 
