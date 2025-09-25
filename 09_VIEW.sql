@@ -138,23 +138,88 @@ SELECT b.brand_name, b.brand_description, c.category_name
 FROM brands b
 JOIN products p ON b.brand_id = p.brand_id
 JOIN categories c ON c.category_id = p.category_id;
-
-SELECT b.brand_name, b.brand_description, c.category_name
-FROM brands b, categories c
-WHERE b.brand_name = ;
+-- 현재는 brands 테이블과 categories 테이블에 연결고리가 없음!
 
 
+-- ALTER TABLE을 사용해 brands 테이블에 category_id 컬럼을 추가하고 외래 키 제약 조건을 설정
+-- ALTER TABLE brands ADD COLUMN category_id VARCHAR(50);  -- ERROR 3780 : 참조하는 컬럼과 참조되는 컬럼의 자료형이 일치하지 않아 발생하는 에러
+ALTER TABLE brands ADD COLUMN category_id INT;
+ALTER TABLE brands ADD FOREIGN KEY(category_id) REFERENCES categories(category_id);
 
+/*
+하나의 테이블에서 여러 수정을 진행할 경우, 콤마(,)를 이용해서 2개 이상의 쿼리를 수행할 수 있다.
+ALTER TABLE brands ADD COLUMN category_id INT,
+					ADD FOREIGN KEY(category_id) REFERENCES categories(category_id);
+*/
+--  category_id 컬럼은 현재 NULL 값으로 채워져 있다. 각 브랜드에 맞는 카테고리 ID를 UPDATE 문으로 지정
+SELECT * FROM categories;
+SELECT * FROM brands;
+SELECT * FROM products;
 
+SET SQL_SAFE_UPDATES = 1;
 
+-- ERROR 1146 : table이 존재하지 않음, table에 해당하는 컬럼명칭이 없음
+-- ERROR 1175 : KEY 형태의 데이터를 변경하지 않아서 안전모드
+UPDATE brands
+SET category_id = 1
+WHERE brand_description LIKE '%전자기업%';
 
+-- category_id WHERE IN 을 활용해서 브랜드 명칭을 넣고, 나이키와 아디다스에 해당하는 브랜드 카테고리 아이디는 4로 지정
+UPDATE brands
+SET category_id = 4
+WHERE brand_name IN ('나이키', '아디다스');
 
+-- void -> 데이터 추가할 때 많이 사용
+-- return -> 몇 개가 있는지 혹은 UPDATE를 했을 때 몇 개가 수정되었는지 개수 확인 후, 클라이언트에게 개수에 따른 결과값 전달
 
+-- 위 사례를 적용한 후, -- 브랜드 * 카테고리를 모두 한 번에 조회하는 SELECT 완성
+-- JOIN OK WHERE OK
+-- PRODUCTS CATEGORIES BRANDS   
+-- PRODUCTS BRANDS brand_id
+-- PRODUCTS CATEGORIES category_id
 
+-- 테이블 간의 컬럼 연결은 보통 JOIN 형태를 쓰며, 2개 이상의 JOIN이 될 경우에는 WHERE 보다 JOIN을 써 주는 것이 좋다!
 
+/* VIEW 생성하기 */
+-- VIEW 의 경우에는 생성할 때 기존에 존재하는지 확인하고,
+-- 존재할 경우에 대해 에러가 발생하지 않도록 설정할 수 있음
+-- CREATE OR REPLACE VIEW  -> 새로운 VIEW로 존재한다면 기존 VIEW 테이블은 제거하고 덮어씌우기
+CREATE VIEW category_brand AS
+SELECT b.brand_name, b.brand_description, c.category_name, b.category_id
+FROM BRANDS b
+JOIN categories c ON b.category_id = c.category_id;
 
+-- JOIN 형태로 데이터를 조회할 경우
+-- Java 에서는 KEYWORD 라는 변수명으로 클라이언트가 HTML에서 작성한 데이터를
+-- DB에 전달함
+SELECT b.brand_name, b.brand_description, c.category_name, b.category_id
+FROM BRANDS b
+JOIN categories c ON b.category_id = c.category_id
+WHERE b.brand_description = '%KEYWORD%'
+AND b.brand_name = '%KEYWORD%'
+AND c.category_name = '%KEYWORD%';
 
+-- VIEW 를 사용하면: 조회할 때 JOIN을 하는 시간 소요 줄일 수 있음, alias 에 해당하는 제약설정을 하지 않아도 됨
+SELECT * FROM category_brand;
 
+-- 종합검색에서 AND 를 사용할 때: 검색결과를 좁히고 싶을 때 사용하는 용도
+-- 특정 인물이나 사원을 조회할 때 사용
+SELECT b.brand_name, b.brand_description, c.category_name, b.category_id
+FROM category_brand
+WHERE b.brand_description = '%KEYWORD%'
+AND b.brand_name = '%KEYWORD%'
+AND c.category_name = '%KEYWORD%';
+
+-- 종합검색에서 OR 를 사용할 때: 검색결과 범위를 넓히고 싶을 때 사용
+-- ex) 카테고리가 스마트폰이거나, 상품설명에 '전자'가 들어있는 제품들 모두 조회
+-- 다양한 제품을 소비자들이 조회할 수 있도록 많은 상품을 보여줄 때 사용
+SELECT b.brand_name, b.brand_description, c.category_name, b.category_id
+FROM category_brand
+WHERE b.brand_description = '%KEYWORD%'
+OR b.brand_name = '%KEYWORD%'
+OR c.category_name = '%KEYWORD%';
+
+-- Java 에서 JOIN 관련 SQL문이 제일 힘듦..!
 
 
 
