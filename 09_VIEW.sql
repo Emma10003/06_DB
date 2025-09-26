@@ -192,6 +192,7 @@ JOIN categories c ON b.category_id = c.category_id;
 -- JOIN 형태로 데이터를 조회할 경우
 -- Java 에서는 KEYWORD 라는 변수명으로 클라이언트가 HTML에서 작성한 데이터를
 -- DB에 전달함
+CREATE OR REPLACE VIEW CATEGORY_BRAND AS
 SELECT b.brand_name, b.brand_description, c.category_name, b.category_id
 FROM BRANDS b
 JOIN categories c ON b.category_id = c.category_id

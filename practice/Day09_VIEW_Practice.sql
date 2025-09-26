@@ -198,7 +198,7 @@ SELECT * FROM v_product_sale_price;
 CREATE OR REPLACE VIEW V_CATEGORY_STATS AS
 SELECT c.category_name, COUNT(p.product_id) AS `product_count`, AVG(p.price) AS `avg_price`
 FROM product p
-JOIN category c ON p.category_id = c.category_id
+LEFT JOIN category c ON p.category_id = c.category_id
 GROUP BY c.category_name;
 
 SELECT * FROM v_category_stats;

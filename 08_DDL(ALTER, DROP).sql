@@ -133,6 +133,9 @@ ALTER TABLE department ADD CHECK(location_id IN('L1', 'L2', 'L3', 'L4', 'L5'));
 ALTER TABLE employee ADD FOREIGN KEY(dept_code) REFERENCES department(dept_id);
 
 
+
+
+
 /* 문제 */
 -- employee 테이블에 NOT NULL 제약조건을 emp_name에 추가
 ALTER TABLE employee MODIFY emp_name VARCHAR(30) NOT NULL;
@@ -199,7 +202,12 @@ DROP DATABASE 스노우;
 
 -- sys는 삭제 금지!!!
 
+USE tje;
 
+SET FOREIGN_KEY_CHECKS = 0;
+-- 내부 데이터만 모두 삭제
+TRUNCATE TABLE brands;
+SELECT * FROM brands;
 
 
 
