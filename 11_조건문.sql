@@ -206,6 +206,30 @@ Searched Case 특징
 
 
 
+-- employees 테이블에서 나이, 급여, 성과점수를 종합해서 승진 후보자를 선정하세요.승진 기준:
+-- 35세 이상이면서 급여 550만원 이상이고 성과 4.2 이상 → 임원 후보
+-- 30세 이상이면서 급여 500만원 이상이고 성과 4.0 이상 → 팀장 후보
+-- 25세 이상이면서 급여 450만원 이상이고 성과 3.8 이상 → 선임 후보
+-- 성과 3.5 미만 → 교육 필요
+-- 그 외 → 현재 유지
+-- 출력: 직원명, 나이, 급여, 성과점수, 승진구분
+
+SELECT emp_name, age, salary, performance_score
+	CASE
+		WHEN age >= 35 AND salary >= 5500000 AND performance_score >= 4.2 THEN '임원 후보'
+		WHEN age >= 30 AND salary >= 5000000 AND performance_score >= 4.0 THEN '팀장 후보'
+		WHEN age >= 25 AND salary >= 4500000 AND performance_score >= 3.8 THEN '선임 후보'
+		WHEN performance_score < 3.5 THEN '교육 필요'
+        ELSE '현재 유지'
+	END AS `승진구분`
+FROM employees;
+
+
+
+
+
+
+
 
 
 
